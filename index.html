@@ -193,6 +193,13 @@
         console.log('Type:', type);
         console.log('Error:', error);
 
+        // If this is a password recovery, redirect to reset-password.html
+        if (type === 'recovery') {
+          console.log('Redirecting to reset-password.html for password recovery');
+          window.location.href = 'reset-password.html' + window.location.hash;
+          return;
+        }
+
         // Check for errors first
         if (error) {
           // Check if it's specifically an expired link
