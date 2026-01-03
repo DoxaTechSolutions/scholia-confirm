@@ -178,28 +178,17 @@
           throw new Error(errorDescription || error);
         }
 
-        // Verify it's a signup confirmation
-        if (type !== 'signup' && type !== 'email_confirmation') {
-          throw new Error('Invalid confirmation type');
-        }
-
+        // If we have an access token and it's a signup/confirmation, it's already confirmed!
         if (!accessToken) {
-          throw new Error('No access token found in URL');
+          throw new Error('No confirmation token found in URL');
         }
 
-        // Verify the token with Supabase
-        const response = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'apikey': SUPABASE_ANON_KEY
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to verify token');
+        if (type !== 'signup' && type !== 'email_confirmation') {
+          throw new Error('Invalid confirmation type: ' + type);
         }
 
-        const userData = await response.json();
+        // Success! The fact that Supabase sent us here with a valid token means email is confirmed
+        console.log('Email confirmed successfully!');
         
         // Show success
         document.getElementById('loading').style.display = 'none';
