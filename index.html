@@ -131,10 +131,10 @@
 
     <div id="error" style="display: none;">
       <div class="icon error">✕</div>
-      <h1>Verification Failed</h1>
+      <h1 id="error-title">Verification Failed</h1>
       <p id="error-message">There was a problem confirming your email.</p>
       
-      <div class="steps">
+      <div class="steps" id="error-steps">
         <strong>What to do:</strong>
         <ol>
           <li>Check if you clicked the latest confirmation link</li>
@@ -142,6 +142,26 @@
           <li>Contact support if the problem persists</li>
         </ol>
       </div>
+    </div>
+
+    <div id="expired" style="display: none;">
+      <div class="icon" style="color: #f59e0b;">⏱</div>
+      <h1>Confirmation Link Expired</h1>
+      <p>This email confirmation link has expired. Confirmation links are only valid for a few minutes after being sent.</p>
+      
+      <div class="steps">
+        <strong>To complete your registration:</strong>
+        <ol>
+          <li>Return to the Scholia extension in Chrome</li>
+          <li>Click the extension icon to open the side panel</li>
+          <li>On the login tab, click <strong>"Forgot password?"</strong> or try signing up again with the same email</li>
+          <li>Check your email and <strong>click the new link immediately</strong> (within 2-3 minutes)</li>
+        </ol>
+      </div>
+      
+      <p style="font-size: 14px; color: #9ca3af; margin-top: 1.5rem;">
+        💡 Tip: Keep your email tab open and ready when signing up so you can click the confirmation link right away.
+      </p>
     </div>
   </div>
 
@@ -175,6 +195,14 @@
 
         // Check for errors first
         if (error) {
+          // Check if it's specifically an expired link
+          const errorCode = hashParams.get('error_code') || queryParams.get('error_code');
+          if (errorCode === 'otp_expired' || error === 'access_denied') {
+            // Show expired message
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('expired').style.display = 'block';
+            return;
+          }
           throw new Error(errorDescription || error);
         }
 
