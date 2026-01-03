@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Confirmed - Scholia</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #333;
+      padding: 20px;
+    }
+    
+    .container {
+      background: white;
+      padding: 3rem 2rem;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      max-width: 500px;
+      width: 100%;
+    }
+    
+    .icon {
+      font-size: 64px;
+      margin-bottom: 1.5rem;
+    }
+    
+    .success { color: #10b981; }
+    .error { color: #ef4444; }
+    
+    h1 {
+      font-size: 28px;
+      margin-bottom: 1rem;
+      color: #1f2937;
+    }
+    
+    p {
+      font-size: 16px;
+      line-height: 1.6;
+      color: #6b7280;
+      margin-bottom: 1rem;
+    }
+    
+    .steps {
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 2rem 0;
+      text-align: left;
+    }
+    
+    .steps ol {
+      margin-left: 1.5rem;
+    }
+    
+    .steps li {
+      margin-bottom: 0.5rem;
+      color: #374151;
+    }
+    
+    .button {
+      display: inline-block;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 12px 32px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      margin-top: 1rem;
+      transition: transform 0.2s;
+    }
+    
+    .button:hover {
+      transform: translateY(-2px);
+    }
+    
+    .spinner {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 4px solid #f3f4f6;
+      border-top-color: #667eea;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 1rem;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="loading">
+      <div class="spinner"></div>
+      <h1>Verifying your email...</h1>
+      <p>Please wait while we confirm your account.</p>
+    </div>
+
+    <div id="success" style="display: none;">
+      <div class="icon success">✓</div>
+      <h1>Email Confirmed!</h1>
+      <p>Your account has been successfully verified.</p>
+      
+      <div class="steps">
+        <strong>Next steps:</strong>
+        <ol>
+          <li>Return to your Chrome browser</li>
+          <li>Click the Scholia extension icon</li>
+          <li>Log in with your email and password</li>
+        </ol>
+      </div>
+      
+      <p style="font-size: 14px; color: #9ca3af;">
+        You can safely close this tab and return to the extension.
+      </p>
+    </div>
+
+    <div id="error" style="display: none;">
+      <div class="icon error">✕</div>
+      <h1>Verification Failed</h1>
+      <p id="error-message">There was a problem confirming your email.</p>
+      
+      <div class="steps">
+        <strong>What to do:</strong>
+        <ol>
+          <li>Check if you clicked the latest confirmation link</li>
+          <li>Try signing up again in the extension</li>
+          <li>Contact support if the problem persists</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Supabase configuration
+    const SUPABASE_URL = 'https://embmbvlxscojscqmcfqp.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVtYm1idmx4c2Nvam5jcW1jZnFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU4MTQwMDcsImV4cCI6MjA1MTM5MDAwN30.6sZWNF9VqJjPkauGIB6iePcT33vE4mUMHnrOPW_aO-E';
+
+    async function confirmEmail() {
+      try {
+        // Get hash parameters from URL
+        const hashParams = new URLSearchParams(window.location.hash.substring(1));
+        const accessToken = hashParams.get('access_token');
+        const refreshToken = hashParams.get('refresh_token');
+        const type = hashParams.get('type');
+        const error = hashParams.get('error');
+        const errorDescription = hashParams.get('error_description');
+
+        // Check for errors first
+        if (error) {
+          throw new Error(errorDescription || error);
+        }
+
+        // Verify it's a signup confirmation
+        if (type !== 'signup' && type !== 'email_confirmation') {
+          throw new Error('Invalid confirmation type');
+        }
+
+        if (!accessToken) {
+          throw new Error('No access token found in URL');
+        }
+
+        // Verify the token with Supabase
+        const response = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'apikey': SUPABASE_ANON_KEY
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to verify token');
+        }
+
+        const userData = await response.json();
+        
+        // Show success
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('success').style.display = 'block';
+
+      } catch (err) {
+        console.error('Confirmation error:', err);
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('error').style.display = 'block';
+        document.getElementById('error-message').textContent = err.message || 'Unknown error occurred';
+      }
+    }
+
+    // Run confirmation on page load
+    confirmEmail();
+  </script>
+</body>
+</html>
