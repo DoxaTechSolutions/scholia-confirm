@@ -152,13 +152,26 @@
 
     async function confirmEmail() {
       try {
+        // Debug: Log full URL
+        console.log('Full URL:', window.location.href);
+        console.log('Hash:', window.location.hash);
+        console.log('Search:', window.location.search);
+
         // Get hash parameters from URL
         const hashParams = new URLSearchParams(window.location.hash.substring(1));
-        const accessToken = hashParams.get('access_token');
-        const refreshToken = hashParams.get('refresh_token');
-        const type = hashParams.get('type');
-        const error = hashParams.get('error');
-        const errorDescription = hashParams.get('error_description');
+        
+        // Also check query parameters (Supabase might use those instead)
+        const queryParams = new URLSearchParams(window.location.search);
+        
+        const accessToken = hashParams.get('access_token') || queryParams.get('access_token');
+        const refreshToken = hashParams.get('refresh_token') || queryParams.get('refresh_token');
+        const type = hashParams.get('type') || queryParams.get('type');
+        const error = hashParams.get('error') || queryParams.get('error');
+        const errorDescription = hashParams.get('error_description') || queryParams.get('error_description');
+
+        console.log('Access Token:', accessToken ? 'present' : 'missing');
+        console.log('Type:', type);
+        console.log('Error:', error);
 
         // Check for errors first
         if (error) {
