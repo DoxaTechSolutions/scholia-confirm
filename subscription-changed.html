@@ -54,47 +54,11 @@
 <body>
   <div class="container">
     <img src="https://raw.githubusercontent.com/scholia-app/scholia-webpage/main/logo.png" alt="Scholia Logo" class="logo">
-    <h1 id="confirmationTitle">Subscription Changed!</h1>
-    <p id="confirmationMessage">Checking your subscription status...</p>
+    <h1>Thank You for Upgrading!</h1>
+    <p>Your subscription change was received.<br>
+    Please check your status in the extension to confirm your new plan.<br>
+    If you have any questions, please contact support.</p>
     <button class="btn" onclick="window.close()">Close Tab</button>
   </div>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
-  <script>
-    // Replace with your Supabase project details
-    const SUPABASE_URL = 'https://embmbvlxscojscqmcfqp.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVtYm1idmx4c2NvanNjcW1jZnFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjczODMxNjcsImV4cCI6MjA4Mjk1OTE2N30.L1nrIrtQgmGC3yH6imtOsIBbxgXGztmybUxeDBu78w8';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    async function checkSubscription() {
-      // Try to get the current user from localStorage/session
-      const { data: { user }, error } = await supabase.auth.getUser();
-      const title = document.getElementById('confirmationTitle');
-      const message = document.getElementById('confirmationMessage');
-      if (error || !user) {
-        title.textContent = 'Unable to Confirm Subscription';
-        message.textContent = 'You are not logged in. Please log in to verify your subscription.';
-        return;
-      }
-      // Query the user's profile
-      const { data, error: profileError } = await supabase
-        .from('profiles')
-        .select('subscription_tier, subscription_status')
-        .eq('id', user.id)
-        .single();
-      if (profileError || !data) {
-        title.textContent = 'Unable to Confirm Subscription';
-        message.textContent = 'Could not retrieve your subscription status. Please contact support.';
-        return;
-      }
-      if (data.subscription_tier === 'premium' || data.subscription_tier === 'pro') {
-        title.textContent = 'Subscription Changed!';
-        message.textContent = `Your subscription is now: ${data.subscription_tier.charAt(0).toUpperCase() + data.subscription_tier.slice(1)}. Status: ${data.subscription_status}.`;
-      } else {
-        title.textContent = 'Subscription Not Upgraded';
-        message.textContent = 'Your account does not show an active paid subscription. If you believe this is an error, please contact support.';
-      }
-    }
-    checkSubscription();
-  </script>
 </body>
 </html>
