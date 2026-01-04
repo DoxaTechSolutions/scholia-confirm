@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Status - Scholia</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #333;
+      padding: 20px;
+    }
+    
+    .container {
+      background: white;
+      padding: 3rem 2rem;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      max-width: 500px;
+      width: 100%;
+    }
+    
+    .icon {
+      font-size: 64px;
+      margin-bottom: 1.5rem;
+    }
+    
+    .success { color: #10b981; }
+    .cancel { color: #f59e0b; }
+    
+    h1 {
+      font-size: 28px;
+      margin-bottom: 1rem;
+      color: #1f2937;
+    }
+    
+    p {
+      font-size: 16px;
+      line-height: 1.6;
+      color: #6b7280;
+      margin-bottom: 1rem;
+    }
+    
+    .steps {
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 2rem 0;
+      text-align: left;
+    }
+    
+    .steps ol {
+      margin-left: 1.5rem;
+    }
+    
+    .steps li {
+      margin-bottom: 0.5rem;
+      color: #374151;
+    }
+    
+    .highlight {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 1rem;
+      border-radius: 8px;
+      margin: 1.5rem 0;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="success" style="display: none;">
+      <div class="icon success">✓</div>
+      <h1>Payment Successful!</h1>
+      <p>Thank you for subscribing to Scholia!</p>
+      
+      <div class="highlight">
+        Your subscription is being activated now.
+      </div>
+      
+      <div class="steps">
+        <strong>What's happening:</strong>
+        <ol>
+          <li>Your payment has been processed successfully</li>
+          <li>Your subscription is being activated (this takes a few seconds)</li>
+          <li>The extension will automatically detect and update your plan</li>
+        </ol>
+      </div>
+      
+      <div class="steps">
+        <strong>Next steps:</strong>
+        <ol>
+          <li>Return to the Scholia extension in Chrome</li>
+          <li>Your subscription will update automatically within 30 seconds</li>
+          <li>If it doesn't update, simply refresh the extension</li>
+        </ol>
+      </div>
+      
+      <p style="font-size: 14px; color: #9ca3af; margin-top: 1rem;">
+        You can safely close this tab and return to the extension.
+      </p>
+    </div>
+
+    <div id="cancel" style="display: none;">
+      <div class="icon cancel">⏸</div>
+      <h1>Checkout Cancelled</h1>
+      <p>Your payment was cancelled and no charges were made.</p>
+      
+      <div class="steps">
+        <strong>What happened:</strong>
+        <p style="margin-bottom: 0.5rem;">You cancelled the checkout process. Your account remains on the free plan.</p>
+      </div>
+      
+      <div class="steps">
+        <strong>Want to subscribe?</strong>
+        <ol>
+          <li>Return to the Scholia extension in Chrome</li>
+          <li>Go to the Settings tab</li>
+          <li>Click the upgrade button to try again</li>
+        </ol>
+      </div>
+      
+      <p style="font-size: 14px; color: #9ca3af; margin-top: 1rem;">
+        You can safely close this tab and return to the extension.
+      </p>
+    </div>
+  </div>
+
+  <script>
+    function showPaymentStatus() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const paymentStatus = urlParams.get('payment');
+      
+      console.log('Payment status:', paymentStatus);
+      
+      if (paymentStatus === 'success') {
+        document.getElementById('success').style.display = 'block';
+      } else if (paymentStatus === 'cancel') {
+        document.getElementById('cancel').style.display = 'block';
+      } else {
+        // If no valid status, redirect back to main page
+        window.location.href = 'index.html';
+      }
+    }
+
+    // Run on page load
+    showPaymentStatus();
+  </script>
+</body>
+</html>
