@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subscription Changed</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #e0e7ff 0%, #f3f4f6 100%);
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      padding: 40px 32px;
+      max-width: 400px;
+      text-align: center;
+    }
+    h1 {
+      color: #6366f1;
+      margin-bottom: 16px;
+    }
+    p {
+      font-size: 1.1em;
+      margin-bottom: 24px;
+    }
+    .logo {
+      width: 64px;
+      margin-bottom: 16px;
+    }
+    .btn {
+      background: #6366f1;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 24px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn:hover {
+      background: #4338ca;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="https://raw.githubusercontent.com/scholia-app/scholia-webpage/main/logo.png" alt="Scholia Logo" class="logo">
+    <h1 id="confirmationTitle">Subscription Changed!</h1>
+    <p id="confirmationMessage">Checking your subscription status...</p>
+    <button class="btn" onclick="window.close()">Close Tab</button>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
+  <script>
+    // Replace with your Supabase project details
+    const SUPABASE_URL = 'https://embmbvlxscojscqmcfqp.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVtYm1idmx4c2NvanNjcW1jZnFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjczODMxNjcsImV4cCI6MjA4Mjk1OTE2N30.L1nrIrtQgmGC3yH6imtOsIBbxgXGztmybUxeDBu78w8';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    async function checkSubscription() {
+      // Try to get the current user from localStorage/session
+      const { data: { user }, error } = await supabase.auth.getUser();
+      const title = document.getElementById('confirmationTitle');
+      const message = document.getElementById('confirmationMessage');
+      if (error || !user) {
+        title.textContent = 'Unable to Confirm Subscription';
+        message.textContent = 'You are not logged in. Please log in to verify your subscription.';
+        return;
+      }
+      // Query the user's profile
+      const { data, error: profileError } = await supabase
+        .from('profiles')
+        .select('subscription_tier, subscription_status')
+        .eq('id', user.id)
+        .single();
+      if (profileError || !data) {
+        title.textContent = 'Unable to Confirm Subscription';
+        message.textContent = 'Could not retrieve your subscription status. Please contact support.';
+        return;
+      }
+      if (data.subscription_tier === 'premium' || data.subscription_tier === 'pro') {
+        title.textContent = 'Subscription Changed!';
+        message.textContent = `Your subscription is now: ${data.subscription_tier.charAt(0).toUpperCase() + data.subscription_tier.slice(1)}. Status: ${data.subscription_status}.`;
+      } else {
+        title.textContent = 'Subscription Not Upgraded';
+        message.textContent = 'Your account does not show an active paid subscription. If you believe this is an error, please contact support.';
+      }
+    }
+    checkSubscription();
+  </script>
+</body>
+</html>
