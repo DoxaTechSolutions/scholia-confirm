@@ -200,6 +200,14 @@
           return;
         }
 
+        // Check if this is a payment success redirect
+        const paymentStatus = queryParams.get('payment');
+        if (paymentStatus === 'success' || paymentStatus === 'cancel') {
+          console.log('Redirecting to payment-success.html for payment status');
+          window.location.href = 'payment-success.html' + window.location.search;
+          return;
+        }
+
         // Check for errors first
         if (error) {
           // Check if it's specifically an expired link
