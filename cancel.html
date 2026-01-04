@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout Cancelled - Scholia</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #333;
+      padding: 20px;
+    }
+    
+    .container {
+      background: white;
+      padding: 3rem 2rem;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      max-width: 500px;
+      width: 100%;
+    }
+    
+    .icon {
+      font-size: 64px;
+      margin-bottom: 1.5rem;
+      color: #f59e0b;
+    }
+    
+    h1 {
+      font-size: 28px;
+      margin-bottom: 1rem;
+      color: #1f2937;
+    }
+    
+    p {
+      font-size: 16px;
+      line-height: 1.6;
+      color: #6b7280;
+      margin-bottom: 1rem;
+    }
+    
+    .steps {
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 2rem 0;
+      text-align: left;
+    }
+    
+    .steps ol {
+      margin-left: 1.5rem;
+    }
+    
+    .steps li {
+      margin-bottom: 0.5rem;
+      color: #374151;
+    }
+
+    .steps p {
+      margin-bottom: 0.5rem;
+      color: #374151;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">⏸</div>
+    <h1>Checkout Cancelled</h1>
+    <p>Your payment was cancelled and no charges were made.</p>
+    
+    <div class="steps">
+      <strong>What happened:</strong>
+      <p>You cancelled the checkout process. Your account remains on the free plan and you can continue using Scholia.</p>
+    </div>
+    
+    <div class="steps">
+      <strong>Want to subscribe?</strong>
+      <ol>
+        <li>Return to the Scholia extension in Chrome</li>
+        <li>Click the extension icon to open the side panel</li>
+        <li>Go to the Settings tab</li>
+        <li>Click an upgrade button to try again anytime</li>
+      </ol>
+    </div>
+    
+    <p style="font-size: 14px; color: #9ca3af; margin-top: 1rem;">
+      You can safely close this tab and return to the extension.
+    </p>
+  </div>
+</body>
+</html>
